@@ -6,7 +6,7 @@ import io.cucumber.java.en.When;
 
 public class StepDefinitions {
 
-    @Given("an example scenario {int}")
+    @Given("project with ID {int} exists")
     public void an_example_scenario(Integer int1) {
     }
     @When("all step definitions are implemented {int}")
