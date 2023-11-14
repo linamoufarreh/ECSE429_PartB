@@ -109,6 +109,7 @@ public class StepDefinitions {
 
     @When("I want to view the list of todos")
     public void i_want_to_view_the_list_of_todos() throws JSONException, IOException {
+        response = HTTP.getResponse(url);
         todos = HTTP.get(url);
     }
 
@@ -142,6 +143,19 @@ public class StepDefinitions {
         assertEquals(body, String.format("{\"errorMessages\":[\"Could not find an instance with todos/%s\"]}", int1));
     }
 
+    @Then("I should see an error message indicating that the todo with ID {int} wasn't found")
+    public void i_should_see_an_error_message_indicating_that_the_todo_with_id_wasn_t_found(Integer int1) throws IOException {
+        assertNotNull(response);
+        assertEquals(response.code(), 404);
+        assertEquals(response.message(), "Not Found");
+
+        assertNotNull(response.body());
+        String body = response.body().string();
+        System.out.println(body);
+
+        assertEquals(body, String.format("{\"errorMessages\":[\"Could not find any instances with todos/%s\"]}", int1));
+    }
+
     @Then("I should see an error message indicating that the todo with GUID {int} does not exist")
     public void i_should_see_an_error_message_indicating_that_the_todo_with_guid_does_not_exist(Integer int1) throws IOException {
         assertNotNull(response);
@@ -150,7 +164,6 @@ public class StepDefinitions {
 
         assertNotNull(response.body());
         String body = response.body().string();
-        System.out.println(body);
 
         assertEquals(body, String.format("{\"errorMessages\":[\"No such todo entity instance with GUID or ID %s found\"]}", int1));
     }
@@ -167,5 +180,110 @@ public class StepDefinitions {
         i_want_to_set_the_todo_with_id_as_done(int1);
     }
 
+    @Given("the title of todo {int} is {string}")
+    public void the_title_of_todo_is(Integer int1, String string) throws JSONException, IOException {
+        // Set the title of todo with ID int1 to string
+        JSONObject setTitle = new JSONObject("{\"title\": \"" + string + "\"}");
+        response = HTTP.postResponse(url + "/" + int1, setTitle);
+        todo = HTTP.post(url + "/" + int1, setTitle);
+    }
+
+    @When("I want to set the title of todo with ID {int} to {string}")
+    public void i_want_to_set_the_title_of_todo_with_id_to(Integer int1, String string) throws JSONException, IOException {
+        the_title_of_todo_is(int1, string);
+    }
+
+    @Given("the description of todo {int} is {string}")
+    public void the_description_of_todo_is(Integer int1, String string) throws JSONException, IOException {
+        JSONObject setDescription = new JSONObject("{\"description\": \"" + string + "\"}");
+        response = HTTP.postResponse(url + "/" + int1, setDescription);
+        todo = HTTP.post(url + "/" + int1, setDescription);
+    }
+
+    @When("I want to set the description of todo with ID {int} to {string}")
+    public void i_want_to_set_the_description_of_todo_with_id_to(Integer int1, String string) throws JSONException, IOException {
+        the_description_of_todo_is(int1, string);
+    }
+
+    @When("I want to add a todo with title {string} and description {string}")
+    public void i_want_to_add_a_todo_with_title_and_description(String string, String string2) throws JSONException, IOException {
+        JSONObject addTodo = new JSONObject("{\n" +
+                "    \"title\": \"" + string + "\",\n" +
+                "    \"doneStatus\": false,\n" +
+                "    \"description\": \""+ string2 + "\",\n" +
+                "    \"tasksof\": []\n" +
+                "}");
+
+        response = HTTP.postResponse(url, addTodo);
+        assertNotNull(response.body());
+
+        if (response.isSuccessful()) {
+            String id = new JSONObject(response.body().string()).getString("id");
+            todo = HTTP.get(url + "/" + id);
+        }
+    }
+
+    @Then("I should see a todo with title {string} and description {string}")
+    public void i_should_see_a_todo_with_title_and_description(String string, String string2) throws JSONException, IOException {
+        JSONObject todo = HTTP.get(url + "?title=" + string + "&description=" + string2);
+        System.out.println(todo);
+        assertNotNull(todo);
+
+        String title = todo.getJSONArray("todos").getJSONObject(0).getString("title");
+        assertEquals(title, string);
+
+        String description = todo.getJSONArray("todos").getJSONObject(0).getString("description");
+        assertEquals(description, string2);
+    }
+
+    @Given("todo with title {string} and description {string} exists")
+    public void todo_with_title_and_description_exists(String string, String string2) throws JSONException, IOException {
+        i_want_to_add_a_todo_with_title_and_description(string, string2);
+    }
+
+    @Then("I should see {int} todos with title {string} and description {string}")
+    public void i_should_see_todos_with_title_and_description(Integer int1, String string, String string2) throws JSONException, IOException {
+        JSONObject todo = HTTP.get(url + "?title=" + string + "&description=" + string2);
+        System.out.println(todo);
+        assertNotNull(todo);
+
+        assertEquals(todo.getJSONArray("todos").length(), int1);
+    }
+
+    @Then("I should see an error message indicating that the title cannot be empty")
+    public void i_should_see_an_error_message_indicating_that_the_title_cannot_be_empty() throws IOException {
+        assertNotNull(response);
+        assertEquals(response.code(), 400);
+        assertEquals(response.message(), "Bad Request");
+
+        assertNotNull(response.body());
+        String body = response.body().string();
+
+        assertEquals(body, "{\"errorMessages\":[\"Failed Validation: title : can not be empty\"]}");
+    }
+
+    @When("I want to remove a todo with ID {int}")
+    public void i_want_to_remove_a_todo_with_id(Integer int1) throws IOException, JSONException {
+        response = HTTP.deleteResponse(url + "/" + int1);
+        todo = HTTP.get(url + "/" + int1);
+    }
+
+    @Then("I should not see a todo with ID {int}")
+    public void i_should_not_see_a_todo_with_id(Integer int1) throws IOException, JSONException {
+        assertNotNull(response);
+        assertNull(todo);
+        assertEquals(response.code(), 200);
+        assertEquals(response.message(), "OK");
+
+        JSONObject todo = HTTP.get(url + "/" + int1);
+        assertNull(todo);
+    }
+
+    @Then("I should see a todo with ID {int}")
+    public void i_should_see_a_todo_with_id(Integer int1) throws JSONException, IOException {
+        JSONObject todo = HTTP.get(url + "/" + int1);
+        assertNotNull(todo);
+        assertEquals(todo.getJSONArray("todos").getJSONObject(0).getString("id"), String.valueOf(int1));
+    }
 
 }
