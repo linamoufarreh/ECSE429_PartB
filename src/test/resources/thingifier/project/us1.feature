@@ -10,7 +10,7 @@ Feature: View Project Details
     When I want to view the list of projects
     Then I should see an empty list of projects
 
-  Scenario : Error Flow Acceptance Test
+  Scenario: Error Flow Acceptance Test
     Given project with invalid ID does not exist,
     When I want to view its details
     Then I should see an error message indicating that the project does not exist
