@@ -17,6 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class StepDefinitions {
     private final String url = "http://localhost:4567/todos";
@@ -39,6 +40,10 @@ public class StepDefinitions {
         } catch (InterruptedException e) {
             System.out.println("Error: " + e.getMessage());
         }
+
+        todo = null;
+        todos = null;
+        response = null;
     }
 
     @After
@@ -60,19 +65,27 @@ public class StepDefinitions {
         assertNotNull(todo);
     }
 
-    @Then("I should see the task's title is {string}")
-    public void i_should_see_the_task_s_title_is(String string) throws JSONException, IOException {
+    @Then("the title of todo with ID {int} is {string}")
+    public void the_title_of_todo_with_id_is(Integer int1, String string) throws JSONException, IOException {
+        JSONObject todo = HTTP.get(url + "/" + int1);
+        assertNotNull(todo);
         String title = todo.getJSONArray("todos").getJSONObject(0).getString("title");
         assertEquals(title, string);
     }
 
-    @Then("the doneStatus is {string}")
-    public void the_done_status_is(String string) throws JSONException {
+
+    @Then("the doneStatus of todo with ID {int} is {string}")
+    public void the_done_status_of_todo_with_id_is(Integer int1, String string) throws JSONException, IOException {
+        JSONObject todo = HTTP.get(url + "/" + int1);
+        assertNotNull(todo);
         boolean doneStatus = todo.getJSONArray("todos").getJSONObject(0).getBoolean("doneStatus");
         assertEquals(doneStatus, Boolean.parseBoolean(string));
     }
-    @Then("the description is {string}")
-    public void the_description_is(String string) throws JSONException {
+
+    @Then("the description of todo with ID {int} is {string}")
+    public void the_description_of_todo_with_id_is(Integer int1, String string) throws JSONException, IOException {
+        JSONObject todo = HTTP.get(url + "/" + int1);
+        assertNotNull(todo);
         String description = todo.getJSONArray("todos").getJSONObject(0).getString("description");
         assertEquals(description, string);
     }
@@ -118,10 +131,41 @@ public class StepDefinitions {
 
     @Then("I should see an error message indicating that the todo with ID {int} does not exist")
     public void i_should_see_an_error_message_indicating_that_the_todo_with_id_does_not_exist(Integer int1) throws IOException {
+        assertNotNull(response);
         assertEquals(response.code(), 404);
         assertEquals(response.message(), "Not Found");
 
         assertNotNull(response.body());
-        assertEquals(response.body().string(), String.format("{\"errorMessages\":[\"Could not find an instance with todos/%s\"]}", int1));
+        String body = response.body().string();
+        System.out.println(body);
+
+        assertEquals(body, String.format("{\"errorMessages\":[\"Could not find an instance with todos/%s\"]}", int1));
     }
+
+    @Then("I should see an error message indicating that the todo with GUID {int} does not exist")
+    public void i_should_see_an_error_message_indicating_that_the_todo_with_guid_does_not_exist(Integer int1) throws IOException {
+        assertNotNull(response);
+        assertEquals(response.code(), 404);
+        assertEquals(response.message(), "Not Found");
+
+        assertNotNull(response.body());
+        String body = response.body().string();
+        System.out.println(body);
+
+        assertEquals(body, String.format("{\"errorMessages\":[\"No such todo entity instance with GUID or ID %s found\"]}", int1));
+    }
+
+    @When("I want to set the todo with ID {int} as done")
+    public void i_want_to_set_the_todo_with_id_as_done(Integer int1) throws JSONException, IOException {
+        JSONObject setDone = new JSONObject("{\"doneStatus\":true}");
+        response = HTTP.postResponse(url + "/" + int1, setDone);
+        todo = HTTP.post(url + "/" + int1, setDone);
+    }
+
+    @Given("the todo with ID {int} is set as done")
+    public void the_todo_with_id_is_set_as_done(Integer int1) throws JSONException, IOException {
+        i_want_to_set_the_todo_with_id_as_done(int1);
+    }
+
+
 }

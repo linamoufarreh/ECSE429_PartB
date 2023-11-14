@@ -86,9 +86,7 @@ public class HTTP {
                 .post(postBody)
                 .build();
 
-        try (Response postResponse = client.newCall(postRequest).execute()) {
-            return postResponse;
-        }
+        return client.newCall(postRequest).execute();
     }
 
     public static JSONObject put(String url, JSONObject body) throws IOException, JSONException {
@@ -117,9 +115,7 @@ public class HTTP {
                 .put(putBody)
                 .build();
 
-        try (Response putResponse = client.newCall(putRequest).execute()) {
-            return putResponse;
-        }
+        return client.newCall(putRequest).execute();
     }
 
     public static int delete(String url) throws IOException, JSONException {
@@ -139,9 +135,7 @@ public class HTTP {
                 .delete()
                 .build();
 
-        try (Response response = client.newCall(request).execute()) {
-            return response;
-        }
+        return client.newCall(request).execute();
     }
 
 }

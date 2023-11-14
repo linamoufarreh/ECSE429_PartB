@@ -3,9 +3,9 @@ Feature: View Todo/Task Details
   Scenario: Normal Flow Acceptance Test
     Given todo with ID 1 exists
     When I want to view the details of todo with ID 1
-    Then I should see the task's title is "scan paperwork"
-    And the doneStatus is "false"
-    And the description is ""
+    Then the title of todo with ID 1 is "scan paperwork"
+    And the doneStatus of todo with ID 1 is "false"
+    And the description of todo with ID 1 is ""
 
   Scenario: Alternate Flow Acceptance Test
     Given no todos exists
