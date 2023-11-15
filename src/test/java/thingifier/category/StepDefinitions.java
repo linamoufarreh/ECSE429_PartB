@@ -227,5 +227,16 @@ public class StepDefinitions {
         assertEquals(body, "{\"errorMessages\":[\"Failed Validation: title : can not be empty\"]}");
     }
 
+    @Given("the description of category {int} is {string}")
+    public void the_description_of_category_is(Integer int1, String string) throws JSONException, IOException {
+        JSONObject setDescription = new JSONObject("{\"description\": \"" + string + "\"}");
+        response = HTTP.postResponse(url + "/" + int1, setDescription);
+        category = HTTP.post(url + "/" + int1, setDescription);
+    }
+
+    @When("I want to set the description of category with ID {int} to {string}")
+    public void i_want_to_set_the_description_of_category_with_id_to(Integer int1, String string) throws JSONException, IOException {
+        the_description_of_category_is(int1, string);
+    }
 
 }
