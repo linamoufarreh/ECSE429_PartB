@@ -59,7 +59,7 @@ public class StepDefinitions {
          }
         }
 
-     @Given("categories with ID {int} exists")
+     @Given("category with ID {int} exists")
      public void category_with_id_exists(Integer int1) throws JSONException, IOException {
          JSONObject category = HTTP.get(url + "/" + int1);
          assertNotNull(category);
@@ -118,5 +118,86 @@ public class StepDefinitions {
         response = HTTP.getResponse(url + "/" + int1);
         category = HTTP.get(url + "/" + int1);
     }
+    @Then("I should see an error message indicating that the category with ID {int} does not exist")
+    public void i_should_see_an_error_message_indicating_that_the_category_with_id_does_not_exist(Integer int1) throws IOException {
+        assertNotNull(response);
+        assertEquals(response.code(), 404);
+        assertEquals(response.message(), "Not Found");
+
+        assertNotNull(response.body());
+        String body = response.body().string();
+        System.out.println(body);
+
+        assertEquals(body, String.format("{\"errorMessages\":[\"Could not find an instance with categories/%s\"]}", int1));
+    }
+
+    @Then("I should see an error message indicating that the category with GUID {int} does not exist")
+    public void i_should_see_an_error_message_indicating_that_the_category_with_guid_does_not_exist(Integer int1) throws IOException {
+        assertNotNull(response);
+        assertEquals(response.code(), 404);
+        assertEquals(response.message(), "Not Found");
+
+        assertNotNull(response.body());
+        String body = response.body().string();
+        System.out.println(body);
+
+        assertEquals(body, String.format("{\"errorMessages\":[\"No such category entity instance with GUID or ID %s found\"]}", int1));
+    }
+
+    @When("I want to add a category with title {string} and description {string}")
+    public void i_want_to_add_a_category_with_title_and_description(String string, String string2) throws JSONException, IOException {
+        JSONObject addCategory = new JSONObject("{\n" +
+                "    \"title\": \"" + string + "\",\n" +
+                "    \"description\": \""+ string2 + "\",\n" +
+                "}");
+
+        response = HTTP.postResponse(url, addCategory);
+        assertNotNull(response.body());
+
+        if (response.isSuccessful()) {
+            String id = new JSONObject(response.body().string()).getString("id");
+            category = HTTP.get(url + "/" + id);
+        }
+    }
+
+    @Then("I should see a category with title {string} and description {string}")
+    public void i_should_see_a_category_with_title_and_description(String string, String string2) throws JSONException, IOException {
+        JSONObject category = HTTP.get(url + "?title=" + string + "&description=" + string2);
+        System.out.println(category);
+        assertNotNull(category);
+
+        String title = category.getJSONArray("categories").getJSONObject(0).getString("title");
+        assertEquals(title, string);
+
+        String description = category.getJSONArray("categories").getJSONObject(0).getString("description");
+        assertEquals(description, string2);
+    }
+
+    @Given("category with title {string} and description {string} exists")
+    public void category_with_title_and_description_exists(String string, String string2) throws JSONException, IOException {
+        i_want_to_add_a_category_with_title_and_description(string, string2);
+    }
+
+    @Then("I should see {int} todos with title {string} and description {string}")
+    public void i_should_see_todos_with_title_and_description(Integer int1, String string, String string2) throws JSONException, IOException {
+        JSONObject todo = HTTP.get(url + "?title=" + string + "&description=" + string2);
+        System.out.println(todo);
+        assertNotNull(todo);
+
+        assertEquals(todo.getJSONArray("todos").length(), int1);
+    }
+
+    @Then("I should see an error message indicating that the title cannot be empty")
+    public void i_should_see_an_error_message_indicating_that_the_title_cannot_be_empty() throws IOException {
+        assertNotNull(response);
+        assertEquals(response.code(), 400);
+        assertEquals(response.message(), "Bad Request");
+
+        assertNotNull(response.body());
+        String body = response.body().string();
+
+        assertEquals(body, "{\"errorMessages\":[\"Failed Validation: title : can not be empty\"]}");
+    }
+
 
 }
