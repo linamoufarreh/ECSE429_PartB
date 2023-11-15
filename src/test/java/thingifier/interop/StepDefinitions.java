@@ -177,4 +177,37 @@ public class StepDefinitions {
         element = HTTP.get(urlCategories + "/" + int1 + "/todos");
     }
 
+    @Given("a todo with id {int} and category with id {int}")
+    public void a_todo_with_id_and_category_with_id(Integer int1, Integer int2) throws JSONException, IOException {
+        JSONObject element = HTTP.get(urlTodos + "/" + int1);
+        assertNotNull(element);
+
+        element = HTTP.get(urlCategories + "/" + int2);
+        assertNotNull(element);
+    }
+
+    @When("the user attempts to add the category with id {int} to todo with id {int}")
+    public void the_user_attempts_to_add_the_category_with_id_to_todo_with_id(Integer int1, Integer int2) throws IOException, JSONException {
+        JSONObject body = new JSONObject();
+        body.put("id", int1.toString());
+        response = HTTP.postResponse(urlTodos + "/" + int2 + "/categories", body);
+    }
+
+    @Then("the todo with id {int} will be associated with the category with id {int}")
+    public void the_todo_with_id_will_be_associated_with_the_category_with_id(Integer int1, Integer int2) throws JSONException, IOException {
+        assertEquals(201, response.code());
+
+        a_todo_with_id_and_category_with_id(int1, int2);
+    }
+
+    @Given("an inexistent todo with id {int} and category with id {int}")
+    public void an_inexistent_todo_with_id_and_category_with_id(Integer int1, Integer int2) throws JSONException, IOException {
+        an_inexistent_todo(int1);
+
+        JSONObject element = HTTP.get(urlCategories + "/" + int2);
+        assertNotNull(element);
+    }
+
+
+
 }
