@@ -1,25 +1,18 @@
-Feature: Rename Category
+Feature: Change category description
 
-    Given I am logged in as a user
-    And I navigate to the category management page
-    When I select the 'Edit' option for a category named 'Books'
-    And I enter 'Literature' as the new category name
-    And I click the 'Save Changes' button
-    Then I should see a confirmation message 'Category renamed successfully to Literature.'
-    And the category 'Books' should now be listed as 'Literature.'
+  Scenario: Normal Flow Acceptance Test
+    Given category with ID 1 exists
+    And the description of category 1 is ""
+    When I want to set the description of category with ID 1 to "New Office 2025"
+    Then the description of category with ID 1 is "New Office 2025
 
-    Given I am logged in as a user
-    And I navigate to the category management page
-    When I select the 'Edit' option for a category named 'Books'
-    And I enter 'Books' as the new category name
-    And I click the 'Save Changes' button
-    Then I should see a message 'No changes were made as the new name is the same as the old one.'
-    And the category name remains as 'Books.'
+  Scenario: Alternate Flow Acceptance Test
+    Given category with ID 1 exists
+    And the description of category 1 is "New Office 2025
+    When I want to set the description of category with ID 1 to "New Office 2025
+    Then the description of category with ID 1 is "New Office 2025
 
-    Given I am logged in as a user
-    And I navigate to the category management page
-    When I select the 'Edit' option for a category named 'Books'
-    And I enter 'Fiction' as the new category name, where 'Fiction' is already an existing category name
-    Then I should see an error message 'Category name 'Fiction' already exists. Please choose a different name.'
-    And the category 'Books' should not be renamed.
-
+  Scenario: Error Flow Acceptance Test
+    Given a non existent category with ID 10
+    When I want to set the description of category with ID 10 to "New Office 2025
+    Then I should see an error message indicating that the category with GUID 10 does not exist

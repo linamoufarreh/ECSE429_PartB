@@ -1,19 +1,18 @@
-Feature: Create a new category
+Feature: Remove a category
 
-    Given I am on the category creation page,
-    When I enter "Home Renovation" as the category name and "Projects related to updating my house" as the description,
-    And I select the option to create the category,
-    Then the new category "Home Renovation" should be created,
-    And I should see a confirmation message that it has been added successfully.
+  Scenario: Normal Flow Acceptance Test
+    Given category with ID 1 exists
+    When I want to remove a category with ID 1
+    Then I should not see a category with ID 1
 
-    Given I am on the category creation page,
-    When I enter "Work Projects" as the category name but leave the description blank,
-    And I select the option to create the category,
-    Then the new category "Work Projects" should be created without a description,
-    And I should see a confirmation message that it has been added successfully.
+  Scenario: Alternate Flow Acceptance Test, Other categories exists
+    Given category with ID 1 exists
+    And category with ID 2 exists
+    When I want to remove a category with ID 1
+    Then I should not see a category with ID 1
+    And I should see a category with ID 2
 
-    Given I am on the category creation page,
-    When I attempt to create a new category without specifying a category name,
-    And I select the option to create the category,
-    Then I should not see a new category created,
-    And I should see an error message indicating that the category name is required.
+  Scenario: Error Flow Acceptance Test, Title is empty
+    Given a non existent category with ID 10
+    When I want to remove a category with ID 10
+    Then I should see an error message indicating that the category with ID 10 wasn't found
