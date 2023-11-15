@@ -1,0 +1,27 @@
+User Story 1:
+As a user, I want to view a todo to check its details, such as the title,
+completion status, and description, so I can have an overview of the
+todo’s current state.
+
+User Story 2:
+As a user, I want to mark a todo as "done" when I finish the task, keeping
+the todo list updated with my completed tasks.
+
+User Story 3:
+As a user, I want to edit a task’s title when its name changes or requires
+an update, ensuring that the todo’s title always reflects its purpose accurately.
+
+User Story 4:
+As a user, I want to update the todos's description when additional information
+becomes available or when I want to provide more context, helping me keep track
+of todo/task details.
+
+User Story 5:
+As a user, I want to add a task to my todo list with a title, status and
+description, so that I can organize my tasks for the day.
+
+User Story 6:
+As a user, I want to delete a task from my todo list so that I can clean
+up my todo list and remove tasks I don’t want anymore, or that I already
+completed.
+
