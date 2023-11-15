@@ -2,16 +2,16 @@ Feature: Mark a project as active
 
   Scenario: Normal Flow Acceptance Test
     Given project with ID 1 exists
-    When I want to mark project 1 as active
-    Then the project's active status should be updated to True
+    When I want to set the project with ID 1 as active
+    Then the active status of project with ID 1 is "true"
 
   Scenario: Alternate Flow Acceptance Test
-    Given project with ID 1 is active
-    When I want to mark project 1 as active
-    Then I should see a message indicating that the project is already active, and no changes are made.
+    Given project with ID 1 is inactive
+    When I want to set the project with ID 1 as active
+    Then the active status of project with ID 1 is "true"
 
   Scenario: Error Flow Acceptance Test
-    Given a project with ID 1 does not exist
-    When I want to mark project 1 as active
-    Then I should see a message indicating that the project does not exist
+    Given a non existent project with ID 76
+    When I want to set the project with ID 76 as active
+    Then I should see an error message indicating that the project with GUID 76 does not exist
 
