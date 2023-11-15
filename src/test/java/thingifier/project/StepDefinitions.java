@@ -230,23 +230,14 @@ public class StepDefinitions {
     public void create_new_project_with_title_string(String string) throws JSONException, IOException {
         JSONObject createProject = new JSONObject("{\"title\":\"" + string + "\"}");
         response = HTTP.postResponse(url, createProject);
-        project = HTTP.post(url, createProject);
     }
 
     @Then("I should see two projects with title {string}")
     public void i_should_see_two_projects_with_title_string(String string) throws JSONException, IOException {
-        JSONObject projectResponse = HTTP.get(url + "?title=" + "\"" + string + "\"");
+        JSONObject projectResponse = HTTP.get(url + "?title=" + string);
         assertNotNull(projectResponse);
-
         JSONArray projectsArray = projectResponse.getJSONArray("projects");
         int size = projectsArray.length();
-        System.out.println("Number of projects with title '" + string + "': " + size);
-
-        // Print details of each project for debugging purposes
-        for (int i = 0; i < size; i++) {
-            JSONObject project = projectsArray.getJSONObject(i);
-            System.out.println("Project " + (i + 1) + ": " + project.toString());
-        }
         assertEquals(size, 2);
     }
 
@@ -277,7 +268,7 @@ public class StepDefinitions {
 
     @Then("I should see multiple projects with the description {string}")
     public void multiple_projects_with_description_string(String string) throws JSONException, IOException {
-        JSONObject project = HTTP.get(url + "?description=" + "\"" + string + "\"");
+        JSONObject project = HTTP.get(url + "?description=" + string);
         assertNotNull(project);
         JSONArray projectsArray = project.getJSONArray("projects");
         boolean multiple = projectsArray.length() > 1;
