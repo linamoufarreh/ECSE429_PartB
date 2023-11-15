@@ -7,8 +7,9 @@ Feature: Update Project Description
 
   Scenario: Alternate Flow Acceptance Test
     Given project with ID 1 exists
-    When I want to set the description of project with ID 1 to ""
-    Then I should see multiple projects with the description ""
+    When I create a new project with description "mcgill work"
+    And I want to set the description of project with ID 1 to "mcgill work"
+    Then I should see multiple projects with the description "mcgill work"
 
   Scenario: Error Flow Acceptance Test
     Given a non existent project with ID 47

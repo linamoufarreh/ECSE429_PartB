@@ -235,11 +235,21 @@ public class StepDefinitions {
 
     @Then("I should see two projects with title {string}")
     public void i_should_see_two_projects_with_title_string(String string) throws JSONException, IOException {
-        JSONObject project = HTTP.get(url+"/title?"+string);
-        assertNotNull(project);
-        JSONArray projects = project.getJSONArray("projects");
-        assertEquals(projects.length(), 2);
+        JSONObject projectResponse = HTTP.get(url + "?title=" + "\"" + string + "\"");
+        assertNotNull(projectResponse);
+
+        JSONArray projectsArray = projectResponse.getJSONArray("projects");
+        int size = projectsArray.length();
+        System.out.println("Number of projects with title '" + string + "': " + size);
+
+        // Print details of each project for debugging purposes
+        for (int i = 0; i < size; i++) {
+            JSONObject project = projectsArray.getJSONObject(i);
+            System.out.println("Project " + (i + 1) + ": " + project.toString());
+        }
+        assertEquals(size, 2);
     }
+
 
     /* US 5: Update Project Description
      */
@@ -258,12 +268,20 @@ public class StepDefinitions {
         assertEquals(description, string);
     }
 
+    @When("I create a new project with description {string}")
+    public void create_new_project_with_description_string(String string) throws JSONException, IOException{
+        JSONObject createProject = new JSONObject("{\"description\":\"" + string + "\"}");
+        response = HTTP.postResponse(url, createProject);
+        project = HTTP.post(url, createProject);
+    }
+
     @Then("I should see multiple projects with the description {string}")
     public void multiple_projects_with_description_string(String string) throws JSONException, IOException {
-        JSONObject project = HTTP.get(url + "/description?" + "\"" + string + "\"");
+        JSONObject project = HTTP.get(url + "?description=" + "\"" + string + "\"");
         assertNotNull(project);
-        JSONArray projects = project.getJSONArray("projects");
-        boolean multiple = projects.length() > 1;
+        JSONArray projectsArray = project.getJSONArray("projects");
+        boolean multiple = projectsArray.length() > 1;
+        System.out.println(multiple);
         assertTrue(multiple);
     }
 
