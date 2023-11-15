@@ -1,4 +1,4 @@
-Feature: View Todo/Task Details
+Feature: Set Todo as Done
 
   Scenario: Normal Flow Acceptance Test
     Given todo with ID 1 exists

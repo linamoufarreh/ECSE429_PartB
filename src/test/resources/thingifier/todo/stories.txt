@@ -19,3 +19,9 @@ of todo/task details.
 User Story 5:
 As a user, I want to add a task to my todo list with a title, status and
 description, so that I can organize my tasks for the day.
+
+User Story 6:
+As a user, I want to delete a task from my todo list so that I can clean
+up my todo list and remove tasks I don’t want anymore, or that I already
+completed.
+
