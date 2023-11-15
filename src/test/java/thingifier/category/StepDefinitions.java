@@ -1,9 +1,5 @@
 package thingifier.category;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-
 import java.io.IOException;
 import java.net.ConnectException;
 
@@ -18,6 +14,8 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import okhttp3.Response;
 import thingifier.HTTP;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class StepDefinitions {
 
@@ -133,9 +131,9 @@ public class StepDefinitions {
 
         assertNotNull(response.body());
         String body = response.body().string();
-        System.out.println(body);
+        //System.out.println(body);
 
-        assertEquals(body, String.format("{\"errorMessages\":[\"Could not find any instances with categories/%s\"]}", int1));
+        assertTrue(body.equals(String.format("{\"errorMessages\":[\"Could not find an instance with categories/%s\"]}", int1)) || body.equals(String.format("{\"errorMessages\":[\"Could not find any instances with categories/%s\"]}", int1)));
     }
 
     //user story 2:

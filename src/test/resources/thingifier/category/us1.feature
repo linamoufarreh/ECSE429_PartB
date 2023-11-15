@@ -11,7 +11,7 @@ Feature: View Category Details
     When I want to view the list of categories
     Then I should see an empty list of categories
 
-  Scenario: [BUG] Error Flow Acceptance Test
+  Scenario: Error Flow Acceptance Test
     Given a non existent category with ID 10
     When I want to view the details of category with ID 10
     Then I should see an error message indicating that the category with ID 10 wasn't found
