@@ -12,7 +12,7 @@ Feature: Delete relationship between todo and category
     Then no changes will occur, and the response will indicate that the relationship doesn't exist.
 
 
-  Scenario: Error Flow Acceptance Test:
+  Scenario: [BUG] Error Flow Acceptance Test:
     Given an inexistent todo with id 8 and a category with id 1
     When the user attempts to delete the relationship between todo with id 8 and category with id 1
     Then a response with code 404 will be received

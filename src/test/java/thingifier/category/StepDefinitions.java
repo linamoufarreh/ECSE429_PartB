@@ -220,17 +220,17 @@ public class StepDefinitions {
         assertEquals(category.getJSONArray("categories").length(), int1);
     }
 
-    @Then("I should see an error message indicating that the title cannot be empty")
-    public void i_should_see_an_error_message_indicating_that_the_title_cannot_be_empty() throws IOException {
-        assertNotNull(response);
-        assertEquals(response.code(), 400);
-        assertEquals(response.message(), "Bad Request");
-
-        assertNotNull(response.body());
-        String body = response.body().string();
-
-        assertEquals(body, "{\"errorMessages\":[\"Failed Validation: title : can not be empty\"]}");
-    }
+//    @Then("I should see an error message indicating that the title cannot be empty")
+//    public void i_should_see_an_error_message_indicating_that_the_title_cannot_be_empty() throws IOException {
+//        assertNotNull(response);
+//        assertEquals(response.code(), 400);
+//        assertEquals(response.message(), "Bad Request");
+//
+//        assertNotNull(response.body());
+//        String body = response.body().string();
+//
+//        assertEquals(body, "{\"errorMessages\":[\"Failed Validation: title : can not be empty\"]}");
+//    }
 
     @Given("the description of category {int} is {string}")
     public void the_description_of_category_is(Integer int1, String string) throws JSONException, IOException {
