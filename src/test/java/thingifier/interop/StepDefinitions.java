@@ -208,6 +208,71 @@ public class StepDefinitions {
         assertNotNull(element);
     }
 
+    @When("the user attempts to delete the relationship between todo with id {int} and category with id {int}")
+    public void the_user_attempts_to_delete_the_relationship_between_todo_with_id_and_category_with_id(Integer int1, Integer int2) throws IOException {
+        response = HTTP.deleteResponse(urlTodos + "/" + int1 + "/categories/" + int2);
+    }
+
+    @Then("the todo with id {int} will no longer be associated with the category with id {int}")
+    public void the_todo_with_id_will_no_longer_be_associated_with_the_category_with_id(Integer int1, Integer int2) throws JSONException, IOException {
+        assertEquals(200, response.code());
+
+        JSONObject element = HTTP.get(urlTodos + "/" + int1 + "/categories");
+        assertNotNull(element);
+
+        JSONArray categories = element.getJSONArray("categories");
+        assertFalse(JSONArrayContains(categories, "id", int2.toString()));
+
+
+    }
+
+    @Then("no changes will occur, and the response will indicate that the relationship doesn't exist.")
+    public void no_changes_will_occur_and_the_response_will_indicate_that_the_relationship_doesn_t_exist() {
+        assertEquals(404, response.code());
+    }
+
+    @Given("an inexistent todo with id {int} and a category with id {int}")
+    public void an_inexistent_todo_with_id_and_a_category_with_id(Integer int1, Integer int2) throws JSONException, IOException {
+        an_inexistent_todo(int1);
+
+        JSONObject element = HTTP.get(urlCategories + "/" + int2);
+        assertNotNull(element);
+    }
+
+    @Given("a category with id {int} with project {int} associated")
+    public void a_category_with_id_with_project_associated(Integer int1, Integer int2) throws JSONException, IOException {
+        JSONObject body = new JSONObject();
+        body.put("id", int2.toString());
+        Response addproject = HTTP.postResponse(urlCategories + "/" + int1 + "/projects", body);
+        assertEquals(201, addproject.code());
+
+        JSONObject element = HTTP.get(urlCategories + "/" + int1 + "/projects");
+        assertNotNull(element);
+
+        JSONArray projects = element.getJSONArray("projects");
+        assertTrue(JSONArrayContains(projects, "id", int2.toString()));
+
+    }
+    @When("the user attempts to view all projects related to the category with id {int}")
+    public void the_user_attempts_to_view_all_projects_related_to_the_category_with_id(Integer int1) throws IOException, JSONException {
+        response = HTTP.getResponse(urlCategories + "/" + int1 + "/projects");
+        element = HTTP.get(urlCategories + "/" + int1 + "/projects");
+
+    }
+
+    @Given("a category with id {int} with no associated projects")
+    public void a_category_with_id_with_no_associated_projects(Integer int1) throws JSONException, IOException {
+        JSONObject element = HTTP.get(urlCategories + "/" + int1 + "/projects");
+        assertNotNull(element);
+
+        JSONArray categories = element.getJSONArray("projects");
+        assertEquals(0, categories.length());
+    }
+
+    @When("the user attempts to view all projects related to the inexistent category with id {int}")
+    public void the_user_attempts_to_view_all_projects_related_to_the_inexistent_category_with_id(Integer int1) throws IOException {
+        response = HTTP.getResponse(urlCategories + "/" + int1 + "/projects");
+    }
 
 
 }
