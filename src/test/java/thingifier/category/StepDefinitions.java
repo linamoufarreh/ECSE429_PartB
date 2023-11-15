@@ -58,12 +58,18 @@ public class StepDefinitions {
              // Ignore
          }
         }
-
+    //user story 1 normal flow
      @Given("category with ID {int} exists")
      public void category_with_id_exists(Integer int1) throws JSONException, IOException {
          JSONObject category = HTTP.get(url + "/" + int1);
          assertNotNull(category);
      }
+
+     @When("I want to view the details of categories with ID {int}")
+    public void i_want_to_view_the_details_of_category_with_id(Integer int1) throws JSONException, IOException {
+        response = HTTP.getResponse(url + "/" + int1);
+        category = HTTP.get(url + "/" + int1);
+    }
 
      @Then("the title of category with ID {int} is {string}")
      public void the_title_of_category_with_id_is(Integer int1, String string) throws JSONException, IOException {
@@ -81,6 +87,7 @@ public class StepDefinitions {
          assertEquals(description, string);
      }
 
+     //alternate flow
      @Given("no categories exists")
      public void no_categories_exists() throws JSONException, IOException {
 
@@ -107,17 +114,14 @@ public class StepDefinitions {
          assertEquals(categories.getJSONArray("categories").length(), 0);
      }
 
+     //error flow 
+
      @Given("a non existent category with ID {int}")
      public void a_non_existent_category_with_id(Integer int1) throws JSONException, IOException {
          JSONObject category = HTTP.get(url + "/" + int1);
          assertNull(category);
      }
 
-     @When("I want to view the details of category with ID {int}")
-    public void i_want_to_view_the_details_of_category_with_id(Integer int1) throws JSONException, IOException {
-        response = HTTP.getResponse(url + "/" + int1);
-        category = HTTP.get(url + "/" + int1);
-    }
     @Then("I should see an error message indicating that the category with ID {int} does not exist")
     public void i_should_see_an_error_message_indicating_that_the_category_with_id_does_not_exist(Integer int1) throws IOException {
         assertNotNull(response);
@@ -129,6 +133,32 @@ public class StepDefinitions {
         System.out.println(body);
 
         assertEquals(body, String.format("{\"errorMessages\":[\"Could not find an instance with categories/%s\"]}", int1));
+    }
+
+    //user story 2:
+    @When("I want to remove a category with ID {int}")
+    public void i_want_to_remove_a_category_with_id(Integer int1) throws IOException, JSONException {
+        response = HTTP.deleteResponse(url + "/" + int1);
+        category = HTTP.get(url + "/" + int1);
+    }
+    @Then("I should not see a category with ID {int}")
+    public void i_should_not_see_a_category_with_id(Integer int1) throws IOException, JSONException {
+        assertNotNull(response);
+        assertNull(category);
+        assertEquals(response.code(), 200);
+        assertEquals(response.message(), "OK");
+
+        JSONObject todo = HTTP.get(url + "/" + int1);
+        assertNull(todo);
+    }
+
+
+    //alternate
+    @Then("I should see a category with ID {int}")
+    public void i_should_see_a_category_with_id(Integer int1) throws JSONException, IOException {
+        JSONObject category = HTTP.get(url + "/" + int1);
+        assertNotNull(category);
+        assertEquals(category.getJSONArray("todos").getJSONObject(0).getString("id"), String.valueOf(int1));
     }
 
     @Then("I should see an error message indicating that the category with GUID {int} does not exist")
@@ -178,13 +208,11 @@ public class StepDefinitions {
         i_want_to_add_a_category_with_title_and_description(string, string2);
     }
 
-    @Then("I should see {int} todos with title {string} and description {string}")
+    @Then("I should see {int} category with title {string} and description {string}")
     public void i_should_see_todos_with_title_and_description(Integer int1, String string, String string2) throws JSONException, IOException {
-        JSONObject todo = HTTP.get(url + "?title=" + string + "&description=" + string2);
-        System.out.println(todo);
-        assertNotNull(todo);
-
-        assertEquals(todo.getJSONArray("todos").length(), int1);
+        JSONObject category = HTTP.get(url + "?title=" + string + "&description=" + string2);
+        System.out.println(category);
+        assertEquals(category.getJSONArray("categories").length(), int1);
     }
 
     @Then("I should see an error message indicating that the title cannot be empty")
