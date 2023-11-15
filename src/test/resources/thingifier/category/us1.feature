@@ -1,4 +1,4 @@
-feature: View Category Details
+Feature: View Category Details
 
   Scenario: Normal Flow Acceptance Test
     Given category with ID 1 exists

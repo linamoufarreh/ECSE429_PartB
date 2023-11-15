@@ -113,7 +113,7 @@ public class StepDefinitions {
          assertNull(category);
      }
 
-     @When("I want to view the details of categories with ID {int}")
+     @When("I want to view the details of category with ID {int}")
     public void i_want_to_view_the_details_of_category_with_id(Integer int1) throws JSONException, IOException {
         response = HTTP.getResponse(url + "/" + int1);
         category = HTTP.get(url + "/" + int1);
